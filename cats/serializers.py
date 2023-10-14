@@ -54,14 +54,11 @@ class CatSerializer(serializers.ModelSerializer):
             # То создаём запись о котике без его достижений
             cat = Cat.objects.create(**validated_data)
             return cat
-
         # Иначе делаем следующее:
         # Уберём список достижений из словаря validated_data и сохраним его
         achievements = validated_data.pop('achievements')
-
         # Создадим нового котика пока без достижений, данных нам достаточно
         cat = Cat.objects.create(**validated_data)
-
         # Для каждого достижения из списка достижений
         for achievement in achievements:
             # Создадим новую запись или получим существующий экземпляр из БД
@@ -74,6 +71,14 @@ class CatSerializer(serializers.ModelSerializer):
                 achievement=current_achievement, cat=cat
             )
         return cat
+
+
+class CatListSerializer(serializers.ModelSerializer):
+    color = serializers.ChoiceField(choices=CHOICES)
+
+    class Meta:
+        model = Cat
+        fields = ('id', 'name', 'color')
 
 
 class OwnerSerializer(serializers.ModelSerializer):
